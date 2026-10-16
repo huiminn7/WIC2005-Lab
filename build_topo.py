@@ -71,7 +71,14 @@ def check(spec):
                 problems.append(f"{host['name']} and {seen[address]} both use {address}")   # blank 2
             else:
                 seen[address] = host["name"]                 # blank 3
-
+    
+    # every link must join two nodes that exist
+    names = set(spec["switches"]) | {host["name"] for host in spec["hosts"]}
+    for a, b in spec["links"]:
+        for end in (a, b):
+            if end not in names:
+                problems.append(f"link [{a}, {b}] uses {end}, which doesn't exist")
+    
     return problems
 
 
