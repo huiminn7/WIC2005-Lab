@@ -58,6 +58,20 @@ def check(spec):
     """
     problems = []
     # TODO: your code here
+    seen = {}  # address -> name of the first host that used it
+
+    for host in spec["hosts"]:
+        for key in ("ip", "ipv6"):
+            if key not in host:
+                continue
+            # turn "10.0.0.2/24" into just 10.0.0.2 (drops the /24)
+            address = ipaddress.ip_interface(host[key]).ip
+
+            if address in seen:                      # blank 1
+                problems.append(f"{host['name']} and {seen[address]} both use {address}")   # blank 2
+            else:
+                seen[address] = host["name"]                 # blank 3
+
     return problems
 
 
