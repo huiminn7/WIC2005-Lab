@@ -97,6 +97,8 @@ def mermaid_diagram(spec):
 
     lines = ["graph TD"]
     for a, b in spec["links"]:
+        if a in ips and b not in ips:   # host listed first: put the switch on top
+            a, b = b, a
         lines.append(f"  {node(a)} --- {node(b)}")
     return "\n".join(lines)
 

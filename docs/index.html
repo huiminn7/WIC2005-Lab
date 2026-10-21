@@ -28,12 +28,12 @@ The same file builds this network in Mininet and generates this page.</p>
 <pre class="mermaid" id="diagram">graph TD
   s1 --- s2
   s1 --- s3
-  h1[&quot;h1&lt;br&gt;10.0.0.1&quot;] --- s2
-  h2[&quot;h2&lt;br&gt;10.0.0.2&quot;] --- s2
-  h3[&quot;h3&lt;br&gt;10.0.0.3&quot;] --- s2
-  h4[&quot;h4&lt;br&gt;10.0.0.4&quot;] --- s3
-  h5[&quot;h5&lt;br&gt;10.0.0.5&quot;] --- s3
-  h6[&quot;h6&lt;br&gt;10.0.0.6&quot;] --- s3</pre>
+  s2 --- h1[&quot;h1&lt;br&gt;10.0.0.1&quot;]
+  s2 --- h2[&quot;h2&lt;br&gt;10.0.0.2&quot;]
+  s2 --- h3[&quot;h3&lt;br&gt;10.0.0.3&quot;]
+  s3 --- h4[&quot;h4&lt;br&gt;10.0.0.4&quot;]
+  s3 --- h5[&quot;h5&lt;br&gt;10.0.0.5&quot;]
+  s3 --- h6[&quot;h6&lt;br&gt;10.0.0.6&quot;]</pre>
 
 <h2>Evidence from the running network</h2>
 <section id="evidence"><h3>pingall: every host reaches every other</h3>
