@@ -15,7 +15,7 @@
 </head>
 <body>
 <h1>My network, built from data</h1>
-<p class="meta">Student ID ending 5000 · generated from <code>topology.yaml</code> by <code>make_page.py</code> on 2026-10-16</p>
+<p class="meta">Student ID ending 5000 · generated from <code>topology.yaml</code> by <code>make_page.py</code> on 2026-10-21</p>
 <p id="summary">3 switches, 6 hosts and 8 links, on IPv4 <code>10.0.0.0/16</code> and IPv6 <code>fd00:5000::/32</code>.
 The same file builds this network in Mininet and generates this page.</p>
 <p>Repository: <a id="repository" href="https://github.com/huiminn7/WIC2005-Lab">https://github.com/huiminn7/WIC2005-Lab</a></p>
@@ -93,13 +93,13 @@ PROBLEM: link [s1, s9] uses s9, which doesn&#x27;t exist
 Fix the description and try again.</pre></section>
 
 <h2>What I learned</h2>
-<section id="answers"><section id="answer-planes"><h3>Where are the data, control and management planes in your network?</h3><p>(Not answered yet.)</p></section>
-<section id="answer-learning"><h3>How did your switches learn which port leads to each host? Use your MAC table evidence.</h3><p>(Not answered yet.)</p></section>
-<section id="answer-kind"><h3>Which of the four kinds of programmability is this assignment (a network described as data, then built and documented by scripts)? Why isn&#x27;t it any of the other three?</h3><p>(Not answered yet.)</p></section>
-<section id="answer-two_am"><h3>Week 1&#x27;s 2 a.m. change on 40 switches: what would be different if those switches were described like your network?</h3><p>(Not answered yet.)</p></section>
-<section id="answer-model"><h3>What&#x27;s the difference between your network&#x27;s data model and its serialisation? Use YAML and JSON as the example.</h3><p>(Not answered yet.)</p></section>
-<section id="answer-check"><h3>Why is it better to catch bad data in check() than with pingall? What did IPv6 notice about a duplicate address that IPv4 didn&#x27;t?</h3><p>(Not answered yet.)</p></section>
-<section id="answer-git"><h3>What does your Git history give you that copying files into folders named topology-v2-final wouldn&#x27;t?</h3><p>(Not answered yet.)</p></section></section>
+<section id="answers"><section id="answer-planes"><h3>Where are the data, control and management planes in your network?</h3><p>The data plane is s1, s2 and s3 forwarding frames between hosts. There is no separate SDN control plane because controller=None; each bridge learns MAC addresses locally. The management side is build_topo.py configuring the network using the description in topology.yaml.</p></section>
+<section id="answer-learning"><h3>How did your switches learn which port leads to each host? Use your MAC table evidence.</h3><p>Each switch learns a host&#x27;s source MAC address and the port where its frame arrives. My macs.txt shows s1 learning h1–h3 (MAC addresses ending 01–03) through port 1 towards s2, and h4–h6 (04–06) through port 2 towards s3. These entries tell s1 which port to use when forwarding frames to each host.</p></section>
+<section id="answer-kind"><h3>Which of the four kinds of programmability is this assignment (a network described as data, then built and documented by scripts)? Why isn&#x27;t it any of the other three?</h3><p>This is automated configuration management because topology.yaml describes the network as data, and scripts build and document it. It is not a programmable data plane because I did not change how switches process packets. It is not an externalised control plane because there is no SDN controller. It is not programmatic device interfaces because I use Mininet rather than device-management APIs such as NETCONF or RESTCONF.</p></section>
+<section id="answer-two_am"><h3>Week 1&#x27;s 2 a.m. change on 40 switches: what would be different if those switches were described like your network?</h3><p>Instead of manually changing 40 switches at 2 a.m., I could edit one shared network description, validate it, and use deployment automation to apply the changes consistently. Like check() in my lab, validation could catch duplicate addresses and nonexistent nodes before deployment. Git would record the changes and let me restore an earlier description, then redeploy it if needed.</p></section>
+<section id="answer-model"><h3>What&#x27;s the difference between your network&#x27;s data model and its serialisation? Use YAML and JSON as the example.</h3><p>The data model defines my network&#x27;s hosts, switches, addresses and links. Serialisation is how that data is written in a file. topology.yaml uses YAML syntax, while topology.json uses JSON syntax. Both can describe the same network, and build_topo.py can read either format.</p></section>
+<section id="answer-check"><h3>Why is it better to catch bad data in check() than with pingall? What did IPv6 notice about a duplicate address that IPv4 didn&#x27;t?</h3><p>check() catches duplicate addresses and nonexistent nodes before the network is built, while pingall only tests connectivity after it is running. My check.txt identifies duplicate IPv4 and IPv6 addresses and a link to nonexistent s9. In dad.txt, IPv6 detected the duplicate fd00:5000::1 and marked it dadfailed tentative. In the same test, IPv4 accepted duplicate 10.0.0.1 as a secondary address without a comparable warning.</p></section>
+<section id="answer-git"><h3>What does your Git history give you that copying files into folders named topology-v2-final wouldn&#x27;t?</h3><p>Git records my committed changes with messages explaining why I made them. git diff shows the exact lines changed, and I can restore an earlier version when needed. Folders named topology-v2-final only store copies, making it harder to track what changed and why.</p></section></section>
 
 <script type="application/json" id="topology-data">{
   "student_id_last4": "5000",
