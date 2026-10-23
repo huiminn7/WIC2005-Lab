@@ -151,7 +151,29 @@ def check_paths(spec):
     find hosts, routers and next hops changes.
     """
     problems = []
-    # TODO: your code here
+    all_hosts = hosts(spec)
+    for src, (_, src_router) in all_hosts.items():
+        for dst, (destination, _) in all_hosts.items():
+            if src == dst:
+                continue
+            router = src_router
+            visited = []
+            while True:
+                if router in visited:
+                    path = " -> ".join(visited + [router])
+                    problems.append(f"{src} to {dst}: loop {path}")
+                    break
+                visited.append(router)
+                kind, next_hop = lookup(spec, router, destination)
+                if kind == "connected":
+                    break
+                if kind == "none":
+                    problems.append(f"{src} to {dst}: {router} has no route to {destination}")
+                    break
+                router = owner(spec, next_hop)
+                if router is None:
+                    problems.append(f"{src} to {dst}: next hop {next_hop} doesn't belong to any router")
+                    break
     return problems
 
 
