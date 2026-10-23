@@ -2,18 +2,27 @@
 # A few sentences each, in your own words, about YOUR network and YOUR evidence.
 # Leave a blank line between paragraphs. Never put your name or full student ID here.
 
-repository: https://github.com/YOUR-USERNAME/YOUR-REPOSITORY
 
+repository: https://github.com/huiminn7/WIC2005-Lab
+ 
 answers:
   design:
     question: "Describe your design: why these routers, LANs and links, and how you chose the addresses."
-    answer: ""
+    answer: |
+      My network has four routers connected in a ring (r1–r2–r3–r4–r1), so every pair of routers has two possible paths. Each router has one LAN with one host, and all addresses come from my block 10.0.0.0/16. The links use /30 networks named after the routers they join (for example 10.0.12.0/30 for r1–r2), and I placed h2's and h3's LANs at 10.0.32.0/24 and 10.0.33.0/24 so they could share one summary route. I also added 10.0.23.0/30 on r1 after hop 3 of my traceroute to h3 showed "* * *", because r1 had no route back to r3's reply address.
+ 
   summary:
     question: "Which route summarises several LANs? Which networks does it cover, why is it correct, and what else would it attract if you added a network inside its range?"
-    answer: ""
+    answer: |
+      The summary route is 10.0.32.0/23 via 10.0.12.2 on r1, which covers h2's LAN (10.0.32.0/24) and h3's LAN (10.0.33.0/24). It is correct because the two networks are contiguous, start on an even number and share their first 23 bits, and both are reachable through r2; my summary.txt shows both hosts going via 10.0.12.2. Any new network added inside 10.0.32.0–10.0.33.255 would also be sent to r2, even if it were somewhere else, unless a more specific route was added.
+ 
   failure:
     question: "When you took a link down, what happened, and why couldn't your routes recover even though another path existed? What would have recovered?"
-    answer: ""
+    answer: |
+      When I took down the r1–r2 link, the trace to h3 stopped at r1 with "!N" and r1 reported "Network is unreachable". Linux removed the routes that used the failed link, and nothing replaced them, because static routes cannot detect failures or find the other path through r4. A routing protocol such as OSPF would have recalculated the path automatically, or backup static routes via r4 with a higher metric could have taken over.
+ 
   control_plane:
     question: "In your network, what was the control plane? Who worked out the routes, and what does that mean for a network of 40 routers?"
-    answer: ""
+    answer: |
+      I was the control plane: I worked out every route by hand in network.yaml, and my check_paths() verified them before anything was built, catching both the loop and the missing route in check.txt. For 40 routers this would not scale, since there would be too many routes to manage by hand and they could not react to failures. A real network would use a routing protocol or an SDN controller to calculate and install the routes automatically.
+ 
