@@ -1,0 +1,57 @@
+warning: in the working copy of 'topology.yaml', CRLF will be replaced by LF the next time Git touches it
+[1mdiff --git a/topology.yaml b/topology.yaml[m
+[1mindex 301253f..7f1d7bc 100644[m
+[1m--- a/topology.yaml[m
+[1m+++ b/topology.yaml[m
+[36m@@ -7,11 +7,15 @@[m
+ # Replace every NNNN and NN below. Don't put your full student ID here: this file[m
+ # goes in your repository, which may be public.[m
+ [m
+[32m+[m
+[32m+[m[32m#my own network: a star.[m
+[32m+[m
+ student_id_last4: "5000"[m
+ [m
+ switches:[m
+   - s1[m
+   - s2[m
+[32m+[m[32m  - s3[m
+ [m
+ hosts:[m
+   - name: h1[m
+[36m@@ -24,12 +28,26 @@[m [mhosts:[m
+     ip: 10.0.0.3/24[m
+     ipv6: fd00:5000::3/64[m
+   - name: h4[m
+[31m-    ip: 10.0.0.2/24[m
+[31m-    ipv6: fd00:5000::2/64[m
+[32m+[m[32m    ip: 10.0.0.4/24[m
+[32m+[m[32m    ipv6: fd00:5000::4/64[m
+[32m+[m[32m  - name: h5[m
+[32m+[m[32m    ip: 10.0.0.5/24[m
+[32m+[m[32m    ipv6: fd00:5000::5/64[m
+[32m+[m[32m  - name: h6[m
+[32m+[m[32m    ip: 10.0.0.6/24[m
+[32m+[m[32m    ipv6: fd00:5000::6/64[m
+[32m+[m
+[32m+[m
+ # Each link joins two nodes.[m
+ links:[m
+[31m-  - [h1, s1][m
+[31m-  - [h2, s1][m
+[31m-  - [h3, s1][m
+[31m-  - [h4, s2][m
+[31m-  - [s1, s2][m
+\ No newline at end of file[m
+[32m+[m[32m  # core to edge switches[m
+[32m+[m[32m  - [s1, s2][m
+[32m+[m[32m  - [s1, s3][m
+[32m+[m[32m  # hosts on s2[m
+[32m+[m[32m  - [h1, s2][m
+[32m+[m[32m  - [h2, s2][m
+[32m+[m[32m  - [h3, s2][m
+[32m+[m[32m  # hosts on s3[m
+[32m+[m[32m  - [h4, s3][m
+[32m+[m[32m  - [h5, s3][m
+[32m+[m[32m  - [h6, s3][m
+\ No newline at end of file[m

@@ -1,0 +1,3 @@
+fd00:5000:32::10 via fd00:5000:12::2 dev r1-eth1 src fd00:5000:12::1 metric 1024 pref medium
+fd00:5000:33::10 via fd00:5000:13::2 dev r1-eth2 src fd00:5000:13::1 metric 1024 pref medium
+fd00:5000:3f::1 via fd00:5000:13::2 dev r1-eth2 src fd00:5000:13::1 metric 1024 pref medium
