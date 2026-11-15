@@ -1,0 +1,63 @@
+# overlay.yaml: your data centre, as data. build_overlay.py builds it; make_page6.py publishes it.
+#
+# Replace 4207 with the last 4 digits of your student ID, and every 10.7. with 10.NN.,
+# where NN is the last 2 digits (as a number: 07 â†’ 7). Then make the design your own.
+#
+# How addresses are given out:
+#   - hypervisors get .1, .2, .3 â€¦ of the underlay network, in the order listed;
+#   - a tenant's VMs get .10, .11, .12 â€¦ of the tenant's network, in the order listed;
+#   - each VM's MAC address is 02:VV:VV:VV:00:XX: the tenant's VNI in the middle, and the last
+#     byte of the VM's address at the end. Two VMs can share an address, never a MAC.
+#
+# Requirements (build_overlay.py checks them):
+#   - at least 3 hypervisors; at least 2 tenants, each with its own VNI;
+#   - two tenants using the SAME network: overlapping addresses, kept apart by VNI;
+#   - every tenant's VMs on at least 2 hypervisors, and one tenant spanning 3;
+#   - at least one hypervisor hosting VMs of two tenants;
+#   - names: a-z and 0-9, starting with a letter, at most 8 characters.
+#
+# This starting design meets the requirements, but it isn't yours yet: change the tenants,
+# VNIs, networks, VMs and placement, and design the MTUs (that's check_mtu()'s job to check).
+
+
+
+# Design: four hypervisors in one rack on the underlay 10.0.0.0/24, and three tenants.
+#   - shop and bank are two customers who both chose 10.0.60.0/24, so their VMs share
+#     addresses (10.0.60.10, .11, .12) and only the VNI keeps them apart.
+#   - shop spans three hypervisors (hv1, hv2, hv4), so a broadcast is copied to two others.
+#   - bank also spans three (hv1, hv3, hv4); hv1 and hv4 host both shop and bank.
+#   - lab is a separate tenant on its own network, 10.0.70.0/24, on hv2 and hv3.
+
+
+student_id_last4: "5000"
+
+underlay:
+  network: 10.0.0.0/24
+  mtu: 1500                    # the largest IP packet the underlay carries
+
+hypervisors: [hv1, hv2, hv3, hv4]
+
+tenants:
+  - name: shop
+    vni: 5010
+    network: 10.0.60.0/24
+    mtu: 1500                  # the largest IP packet this tenant's VMs send
+    vms:                       # [VM name, the hypervisor it runs on]
+      - [shop1, hv1]           # 10.0.60.10
+      - [shop2, hv2]           # 10.0.60.11
+      - [shop3, hv4]           # 10.0.60.12
+  - name: bank
+    vni: 5020
+    network: 10.0.60.0/24      # the same addresses as shop, on purpose
+    mtu: 1500
+    vms:
+      - [bank1, hv1]           # 10.0.60.10, the same address as shop1, on the same hypervisor
+      - [bank2, hv3]           # 10.0.60.11, the same address as shop2
+      - [bank3, hv4]           # 10.0.60.12, the same address as shop3, on the same hypervisor
+  - name: lab
+    vni: 5030
+    network: 10.0.70.0/24
+    mtu: 1500
+    vms:
+      - [lab1, hv2]            # 10.0.70.10
+      - [lab2, hv3]            # 10.0.70.11
