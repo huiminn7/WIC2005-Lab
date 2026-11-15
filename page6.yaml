@@ -1,0 +1,41 @@
+# page6.yaml: the words on your Week 6 page. make_page6.py puts each answer under its question.
+# A few sentences each, in your own words, about YOUR overlay and YOUR evidence.
+# Leave a blank line between paragraphs. Don't put your name or your full student ID in this file.
+
+repository: https://github.com/huiminn7/WIC2005-Lab
+
+answers:
+  design:
+    question: "Describe your design: hypervisors, tenants, VNIs and addresses. Which tenants overlap, and why did you place each VM where you did?"
+    answer: |
+      Four hypervisors (hv1 to hv4, 10.0.0.1 to .4) on the underlay 10.0.0.0/24 carry three tenants: shop (VNI 5010) and bank (VNI 5020) both use 10.0.60.0/24, so their VMs share .10, .11 and .12. lab (VNI 5030) uses 10.0.70.0/24.
+
+      I put a shop VM and a bank VM with the same address on hv1 and on hv4, to make isolation as hard as possible. shop (hv1, hv2, hv4) and bank (hv1, hv3, hv4) each span three hypervisors, so each has a different flood list. The final design uses fix B: underlay MTU 9000, tenants 1500.
+
+  isolation:
+    question: "Two of your VMs have the same IP address. Using your evidence, explain how a ping reaches the right one — and what would have to go wrong for one tenant to see another's traffic."
+    answer: |
+      shop3 and bank3 are both 10.0.60.12, on hv4. shop1's 3 pings were all answered, while a capture on bank3 with no filter saw 0 packets, not even the ARP.
+
+      The VNI decides, not the address: shop1's port is only in br5010, so its frames leave as VNI 5010, and on hv4 VNI 5010 is delivered only to br5010, where shop3 is. bank3 is in br5020. A leak would need a VM port in the wrong bridge, two tenants with the same VNI, or someone on the underlay injecting VXLAN packets, because VXLAN itself has no authentication.
+
+  flood_learn:
+    question: "Using your evidence, explain what was flooded, to which hypervisors, and what each VTEP learned. With 50 hypervisors in one VNI, how many copies would one broadcast need — and how would EVPN change that?"
+    answer: |
+      Before traffic, hv1's vxlan5010 held only its flood entries for 10.0.0.2 and 10.0.0.4. shop1's ARP for shop2 was copied to both: my capture on hv4 shows it (10.0.0.1 to 10.0.0.4, VNI 5010) although the conversation was with hv2, and the pings that followed went to hv2 only. Afterwards, hv1 had learned shop2's MAC behind 10.0.0.2, and hv4 had learned shop1's behind 10.0.0.1 from the flood alone.
+
+      With 50 hypervisors, one broadcast needs 49 copies. EVPN uses BGP to advertise each VM's MAC and IP in advance, so unknown-unicast flooding stops, flood lists are built automatically, and ARP can be answered locally.
+
+  mtu:
+    question: "Compare your two MTU fixes using your measurements. Which would you choose for a data centre, what does each cost, and who has to change what?"
+    answer: |
+      In the black hole, -s 1422 worked, -s 1423 was silently lost, and iperf3 moved 0 bytes. Fix A (tenants 1450) refused -s 1423 with "message too long" and reached 3.67 Gbit/s. Fix B (underlay 9000) carried -s 1472 and reached 4.07 Gbit/s, about 11% faster, with far fewer retransmits (54 against 363).
+
+      Fix A costs 50 bytes per packet, and every tenant VM must change its MTU. Fix B costs the operator: every hypervisor NIC and underlay switch port must be set to jumbo frames. I chose B, because the operator controls the underlay and tenants keep a normal 1500.
+
+  p4:
+    question: "If your hypervisors' VTEPs were P4 switches running the lecture's vtep.p4, what would have to fill the vtep_encap table, and how? What would replace flood-and-learn?"
+    answer: |
+      A P4 switch doesn't learn by itself, so a controller would fill vtep_encap through P4Runtime, with entries mapping a tenant's VNI and destination MAC to the remote VTEP's IP. For example, on hv1, VNI 5010 with MAC 02:00:13:92:00:0b goes to 10.0.0.2.
+
+      The controller could take these straight from overlay.yaml, which already lists every VM's tenant and hypervisor. That replaces flood-and-learn with a control plane that pushes MAC locations in advance; broadcasts would use the switch's replication engine or be answered by the controller.
