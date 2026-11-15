@@ -1,0 +1,4 @@
+PROBLEM: tenant shop (VNI 5010): MTU 1500 + 50 bytes of VXLAN = 1550, but the underlay carries only 1500: 50 bytes too big (largest tenant MTU that fits: 1450)
+PROBLEM: tenant bank (VNI 5020): MTU 1500 + 50 bytes of VXLAN = 1550, but the underlay carries only 1500: 50 bytes too big (largest tenant MTU that fits: 1450)
+PROBLEM: tenant lab (VNI 5030): MTU 1500 + 50 bytes of VXLAN = 1550, but the underlay carries only 1500: 50 bytes too big (largest tenant MTU that fits: 1450)
+Fix the design and try again: nothing was built.
