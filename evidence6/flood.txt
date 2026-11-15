@@ -1,0 +1,40 @@
+== hv1: vxlan5010 before any traffic
+d6:b6:b1:5c:e6:74 vlan 1 master br5010 permanent
+d6:b6:b1:5c:e6:74 master br5010 permanent
+00:00:00:00:00:00 dst 10.0.0.2 self permanent
+00:00:00:00:00:00 dst 10.0.0.4 self permanent
+PING 10.0.60.11 (10.0.60.11) 56(84) bytes of data.
+64 bytes from 10.0.60.11: icmp_seq=1 ttl=64 time=2.21 ms
+64 bytes from 10.0.60.11: icmp_seq=2 ttl=64 time=0.103 ms
+
+--- 10.0.60.11 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1002ms
+rtt min/avg/max/mdev = 0.103/1.157/2.211/1.054 ms
+== captured on hv4's underlay
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on hv4-eth0, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+05:26:01.844374 ARP, Request who-has 10.0.0.4 tell 10.0.0.1, length 28
+05:26:01.844642 ARP, Reply 10.0.0.4 is-at 9a:8b:0e:d2:f6:b3, length 28
+05:26:01.844654 ARP, Request who-has 10.0.0.2 tell 10.0.0.1, length 28
+05:26:01.845028 IP 10.0.0.1.33550 > 10.0.0.4.4789: VXLAN, flags [I] (0x08), vni 5010
+ARP, Request who-has 10.0.60.11 tell 10.0.60.10, length 28
+05:26:04.027583 IP6 fe80::88f2:89ff:feac:242 > ff02::2: ICMP6, router solicitation, length 16
+05:26:05.051650 IP6 fe80::bc39:3dff:fefe:b37f > ff02::2: ICMP6, router solicitation, length 16
+
+6 packets captured
+6 packets received by filter
+0 packets dropped by kernel
+== hv1: vxlan5010 after
+02:00:13:92:00:0b master br5010 
+d6:b6:b1:5c:e6:74 vlan 1 master br5010 permanent
+d6:b6:b1:5c:e6:74 master br5010 permanent
+02:00:13:92:00:0b dst 10.0.0.2 self 
+00:00:00:00:00:00 dst 10.0.0.2 self permanent
+00:00:00:00:00:00 dst 10.0.0.4 self permanent
+== hv4: vxlan5010 after
+02:00:13:92:00:0a master br5010 
+4a:a1:e6:ad:2f:fd vlan 1 master br5010 permanent
+4a:a1:e6:ad:2f:fd master br5010 permanent
+02:00:13:92:00:0a dst 10.0.0.1 self 
+00:00:00:00:00:00 dst 10.0.0.1 self permanent
+00:00:00:00:00:00 dst 10.0.0.2 self permanent

@@ -1,0 +1,15 @@
+PING 10.0.60.12 (10.0.60.12) 56(84) bytes of data.
+64 bytes from 10.0.60.12: icmp_seq=1 ttl=64 time=2.48 ms
+64 bytes from 10.0.60.12: icmp_seq=2 ttl=64 time=0.097 ms
+64 bytes from 10.0.60.12: icmp_seq=3 ttl=64 time=0.096 ms
+
+--- 10.0.60.12 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2002ms
+rtt min/avg/max/mdev = 0.096/0.892/2.483/1.125 ms
+== captured on bank3
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on bank3-eth0, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+
+0 packets captured
+0 packets received by filter
+0 packets dropped by kernel
